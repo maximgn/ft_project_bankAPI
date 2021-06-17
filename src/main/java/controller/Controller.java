@@ -1,9 +1,10 @@
-package utils;
+package controller;
 
 import com.sun.net.httpserver.*;
-import entities.responses.server.ServerResponse;
+import response.EmptyResponse;
+import response.Response;
 import services.*;
-
+import utils.HandlerResponse;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -11,17 +12,16 @@ import java.util.stream.Collectors;
 
 public class Controller {
 
-    private AccountsService accountsService;
-    private CardsService cardsService;
+    private AccountService accountService;
+    private CardService cardService;
 
     HttpServer server;
 
-    public void setAccountsService(AccountsService as) {
-        this.accountsService = as;
+    public void setAccountsService(AccountService as) {
+        this.accountService = as;
     }
-
-    public void setCardsService(CardsService cs) {
-        this.cardsService = cs;
+    public void setCardsService(CardService cs) {
+        this.cardService = cs;
     }
 
     public void runServer() {
@@ -39,37 +39,57 @@ public class Controller {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
 
-            ServerResponse<?> response = null;
+            Response response = null;
             String URI = exchange.getRequestURI().getPath();
-
-            String requestContentBody = "";
+            String[] paths = URI.split("/");
+            String method = exchange.getRequestMethod();
+            String bodyStr = "";
             try (BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))) {
-                requestContentBody = br.lines().collect(Collectors.joining("\n"));
+                bodyStr = br.lines().collect(Collectors.joining("\n"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            Map<String, Object> postData = HandlerResponse.requestToMap(requestContentBody);
+            Map<String, Object> body = null;
+            if (!method.equals("GET")) body = HandlerResponse.requestToMap(bodyStr);
 
-            if (URI.equals("/new/card")) {
-                response = accountsService.addNewCard((String)postData.get("accountNumber"));
-            } else if (URI.equals("/all/cards")) {
-                response = cardsService.showAllCards(((String)postData.get("accountNumber")));
-            } else if (URI.equals("/increase/balance")) {
-                response = accountsService.increaseAccountBalance((String)postData.get("accountNumber"), postData.get("sum"));
-            } else if (URI.equals("/check/balance")) {
-                response = accountsService.showAccountBalance((String)postData.get("accountNumber"));
-            } else {
-                response.setServerCode(400);
-                response.setData(null);
+            if (paths[1].equals("cards")) {
+                switch (method) {
+                    case "POST":
+                        response = cardService.add((String)body.get("accountNumber"));
+                        break;
+                    case "GET":
+                        response = cardService.getAll(paths[2]);
+                        break;
+                    default: break;
+                }
             }
+
+            if (paths[1].equals("accounts")) {
+                switch (method) {
+                    case "PUT":
+                        response = accountService.updateBalance(paths[2], body.get("sum"));
+                        break;
+                    case "GET":
+                        response = accountService.readBalance(paths[2]);
+                        break;
+                    default: break;
+                }
+            }
+
+            if (response == null) {
+                response = new EmptyResponse();
+                response.setStatusCode(400);
+                response.setResponse("Bad Request");
+            }
+
             handleResponse(exchange, response);
         }
 
-        private void handleResponse(HttpExchange httpExchange, ServerResponse<?> response)  throws  IOException {
+        private void handleResponse(HttpExchange httpExchange, Response<?> response)  throws  IOException {
             OutputStream outputStream = httpExchange.getResponseBody();
-            httpExchange.sendResponseHeaders(response.getServerCode(), HandlerResponse.responseToJSON(response.getData()).length());
-            outputStream.write(HandlerResponse.responseToJSON(response.getData()).getBytes());
+            httpExchange.sendResponseHeaders(response.getStatusCode(), HandlerResponse.responseToJSON(response).length());
+            outputStream.write(HandlerResponse.responseToJSON(response).getBytes());
             outputStream.close();
         }
     }

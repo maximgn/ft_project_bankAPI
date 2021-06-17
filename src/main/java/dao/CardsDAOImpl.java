@@ -1,80 +1,50 @@
 package dao;
-import entities.Cards;
+import entities.Card;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static utils.DatabaseConnection.getConnection;
 
-public class DataCards implements CardsDAO {
+public class CardsDAOImpl implements CardsDAO {
 
-    private static DataCards instance;
-    private DataCards(){}
+    private static CardsDAOImpl instance;
+    private CardsDAOImpl(){}
 
-    public static DataCards getInstance() {
+    public static CardsDAOImpl getInstance() {
         if (instance == null) {
-            instance = new DataCards();
+            instance = new CardsDAOImpl();
         }
         return instance;
     }
 
     @Override
-    public void insert(Cards card) throws SQLException {
+    public String create(Card card) throws SQLException {
         Connection conn = getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String SQL = "INSERT INTO CARDS VALUES(default,?,?,?)";
-            stmt = conn.prepareStatement(SQL);
+        String SQL = "INSERT INTO CARDS VALUES(default,?,?,?)";
+        try (PreparedStatement stmt = conn.prepareStatement(SQL)) {
             stmt.setString(1, card.getCardNumber());
             stmt.setString(2, card.getAccountNumber());
             stmt.setInt(3, card.getUserID());
             stmt.executeUpdate();
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
         }
+        return card.getCardNumber();
     }
 
     @Override
-    public List<Cards> getAllCardsByAccountNumber(String accNumber) throws SQLException {
-        List<Cards> allCardsByAccount = new ArrayList<>();
+    public Map<Integer, String> getAllByAccountNumber(String accountNumber) throws SQLException {
         Connection conn = getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String SQL = "SELECT * FROM CARDS WHERE acc_number = ?";
-            stmt = conn.prepareStatement(SQL);
-            stmt.setString(1, accNumber);
-            rs = stmt.executeQuery();
+        String SQL = "SELECT * FROM CARDS WHERE acc_number = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(SQL)) {
+            stmt.setString(1, accountNumber);
+            ResultSet rs = stmt.executeQuery();
+            Map<Integer, String> cardsList = new HashMap<>();
             while (rs.next()) {
-                allCardsByAccount.add(new Cards(rs.getInt("id"), rs.getString("card_number"), rs.getString("acc_number"), rs.getInt("user_id")));
+                cardsList.put(rs.getInt("id"), rs.getString("card_number"));
             }
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
+            return cardsList;
         }
-
-        if (allCardsByAccount.size() == 0) return null;
-        return allCardsByAccount;
     }
 
 }

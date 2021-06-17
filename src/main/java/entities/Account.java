@@ -3,7 +3,7 @@ package entities;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class Accounts {
+public class Account {
     private int id;
     private String accountNumber;
     private BigDecimal balance;
@@ -45,7 +45,7 @@ public class Accounts {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Accounts accounts = (Accounts) o;
+        Account accounts = (Account) o;
         return Objects.equals(accountNumber, accounts.accountNumber);
     }
 

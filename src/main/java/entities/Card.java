@@ -2,21 +2,20 @@ package entities;
 
 import java.util.Objects;
 
-public class Cards {
+public class Card {
 
     private int id;
     private String cardNumber;
     private String accountNumber;
     private int userID;
 
-    public Cards(String cardNumber, String accountNumber, int userID) {
-        this.id = id;
+    public Card(String cardNumber, String accountNumber, int userID) {
         this.cardNumber = cardNumber;
         this.accountNumber = accountNumber;
         this.userID = userID;
     }
 
-    public Cards(int id, String cardNumber, String accountNumber, int userID) {
+    public Card(int id, String cardNumber, String accountNumber, int userID) {
         this.id = id;
         this.cardNumber = cardNumber;
         this.accountNumber = accountNumber;
@@ -59,7 +58,7 @@ public class Cards {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cards cards = (Cards) o;
+        Card cards = (Card) o;
         return Objects.equals(cardNumber, cards.cardNumber);
     }
 

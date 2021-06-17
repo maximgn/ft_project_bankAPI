@@ -1,20 +1,9 @@
 package dao;
 
-import entities.Accounts;
-
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
-public interface AccDAO {
-    //create
-    void insert(Accounts account);
-
-    //read
-    Accounts getAccountByNumber(String accNumber);
-    BigDecimal getAccountBalance(String accNumber);
-
-    //update
-    void updateBalanceAccount(String accNUmber);
-
-    //delete
-    void deleteAccountById(int id);
+public interface AccountsDAO extends DAO {
+    Object updateBalance(String accountNumber, Object sum) throws SQLException;
+    BigDecimal readBalance(String accountNumber) throws SQLException;
 }

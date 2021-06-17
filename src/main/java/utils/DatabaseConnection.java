@@ -7,16 +7,20 @@ public class DatabaseConnection {
     private static String DB_USERNAME = "admin";
     private static String DB_PASSWORD = "";
     private static String DB_DRIVER = "org.h2.Driver";
+    private static Connection connection;
+
+
 
     public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            Class.forName(DB_DRIVER);
-            connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (connection == null) {
+            try {
+                Class.forName(DB_DRIVER);
+                connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         return connection;
     }

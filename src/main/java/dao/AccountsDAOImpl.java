@@ -1,111 +1,45 @@
 package dao;
 
-import entities.Accounts;
 import java.math.BigDecimal;
 import java.sql.*;
 
 import static utils.DatabaseConnection.getConnection;
 
-public class DataAccounts implements AccountsDAO {
+public class AccountsDAOImpl implements AccountsDAO {
 
-    private static DataAccounts instance;
-    private DataAccounts(){}
+    private static AccountsDAOImpl instance;
+    private AccountsDAOImpl(){}
 
-    public static DataAccounts getInstance() {
+    public static AccountsDAOImpl getInstance() {
         if (instance == null) {
-            instance = new DataAccounts();
+            instance = new AccountsDAOImpl();
         }
         return instance;
     }
 
     @Override
-    public Accounts getAccountByNumber(String accNumber) throws SQLException {
-        Accounts account = new Accounts();
+    public Object updateBalance(String accountNumber, Object sum) throws SQLException {
         Connection conn = getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String SQL = "SELECT * FROM ACCOUNTS WHERE account_number = ?";
-            stmt = conn.prepareStatement(SQL);
-            stmt.setString(1, accNumber);
-            rs = stmt.executeQuery();
-            if (rs.next()) {
-                account.setId(rs.getInt("id"));
-                account.setAccountNumber(rs.getString("account_number"));
-                account.setBalance(rs.getBigDecimal("balance"));
-                account.setUserID(rs.getInt("user_id"));
-                return account;
-            }
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public BigDecimal getAccountBalance(String accNumber) throws SQLException {
-        BigDecimal balance = new BigDecimal(0);
-        Connection conn = getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String SQL = "SELECT balance FROM ACCOUNTS WHERE account_number = ?";
-            stmt = conn.prepareStatement(SQL);
-            stmt.setString(1, accNumber);
-            rs = stmt.executeQuery();
-            if (rs.next()) {
-                balance = rs.getBigDecimal("balance");
-            }
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
-        }
-        return balance;
-    }
-
-    @Override
-    public void updateBalanceAccount(String accNumber, Object sum) throws SQLException {
-        Connection conn = getConnection();
-        PreparedStatement stmt = null;
-        try {
-            String SQL = "UPDATE ACCOUNTS SET balance = balance + ? WHERE account_number = ?";
-            stmt = conn.prepareStatement(SQL);
+        String SQL = "UPDATE ACCOUNTS SET balance = balance + ? WHERE account_number = ?";
+        try(PreparedStatement stmt = conn.prepareStatement(SQL)) {
             stmt.setObject(1, sum);
-            stmt.setString(2, accNumber);
+            stmt.setString(2, accountNumber);
             stmt.executeUpdate();
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
+        }
+        BigDecimal currentBalance = readBalance(accountNumber);
+        return currentBalance;
+    }
+
+    @Override
+    public BigDecimal readBalance(String accountNumber) throws SQLException {
+        Connection conn = getConnection();
+        String SQL = "SELECT balance FROM ACCOUNTS WHERE account_number = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(SQL)) {
+            stmt.setString(1, accountNumber);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getBigDecimal("balance");
         }
     }
+
 }

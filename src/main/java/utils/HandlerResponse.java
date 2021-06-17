@@ -1,13 +1,15 @@
-package response.parse;
+package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import entities.Accounts;
-import responses.Response;
+import response.Response;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandlerResponse {
 
-    public static String responseToJSON(Response response) {
+    public static String responseToJSON(Response<?> response) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonResponse = null;
         try {
@@ -18,14 +20,14 @@ public class HandlerResponse {
         return jsonResponse;
     }
 
-    public static Accounts requestToEntity(String request) {
-        Accounts entity = null;
+    public static Map<String, Object> requestToMap(String request) {
         ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> details = new HashMap<>();
         try {
-            entity = mapper.readValue(request, Accounts.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            details = mapper.readValue(request, HashMap.class);
+        } catch (JsonProcessingException jpe) {
+            jpe.printStackTrace();
         }
-        return entity;
+        return details;
     }
 }

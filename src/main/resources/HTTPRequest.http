@@ -1,0 +1,17 @@
+GET http://localhost:9099/cards/10100202139087645632
+Accept: application/json
+
+###
+POST http://localhost:9099/cards
+Content-Type: application/json
+
+{"accountNumber":  "10100202139087645632"}
+
+###
+PUT http://localhost:9099/accounts/10100202139087645632
+Content-Type: application/json
+
+{"sum":  "300"}
+
+###
+GET http://localhost:9099/accounts/10100202139087645632
