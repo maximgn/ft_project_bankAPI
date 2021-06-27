@@ -3,9 +3,6 @@ package services;
 import dao.CardsDAOImpl;
 import entities.Account;
 import entities.Card;
-import response.CreateCardResponse;
-import response.ReadCardsResponse;
-import response.Response;
 import utils.CardNumbers;
 
 import java.sql.SQLException;

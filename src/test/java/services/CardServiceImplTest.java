@@ -1,20 +1,15 @@
 package services;
 
 import dao.CardsDAOImpl;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import response.ReadCardsResponse;
-import response.Response;
 import utils.ReadContentFile;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static utils.DatabaseConnection.createOrFillDatabase;
-import static utils.DatabaseConnection.getConnection;
 
 class CardServiceTest {
 
