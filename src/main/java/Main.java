@@ -13,10 +13,10 @@ public class Main {
         createOrFillDatabase(ReadContentFile.readUsingFiles(schema));
         createOrFillDatabase(ReadContentFile.readUsingFiles(data));
         Controller controller = new Controller();
-        AccountService.getInstance().setAccountsDAOImpl(AccountsDAOImpl.getInstance());
-        CardService.getInstance().setCardsDAOImpl(CardsDAOImpl.getInstance());
-        controller.setAccountsService(AccountService.getInstance());
-        controller.setCardsService(CardService.getInstance());
+        AccountServiceImpl.getInstance().setAccountsDAOImpl(AccountsDAOImpl.getInstance());
+        CardServiceImpl.getInstance().setCardsDAOImpl(CardsDAOImpl.getInstance());
+        controller.setAccountsService(AccountServiceImpl.getInstance());
+        controller.setCardsService(CardServiceImpl.getInstance());
         controller.runServer();
     }
 }
