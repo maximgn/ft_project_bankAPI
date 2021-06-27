@@ -2,9 +2,8 @@ package services;
 
 import dao.*;
 import entities.Account;
-import response.ReadBalanceResponse;
-import response.Response;
-import response.UpdateBalanceResponse;
+import entities.Response;
+
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
@@ -31,11 +30,12 @@ public class AccountService {
     }
 
     public Response updateBalance(String accountNumber, Object sum) {
-        UpdateBalanceResponse response = new UpdateBalanceResponse();
+        Response response = new Response();
         try {
             Account account = da.checkAccount(accountNumber);
             if (account == null) {
-                response.setStatusCode(400);
+                response.setStatus(400);
+                response.setMessage("");
                 response.setResponse(null);
                 return response;
             }
