@@ -3,21 +3,22 @@ package services;
 import dao.CardsDAOImpl;
 import entities.Account;
 import entities.Card;
+import entities.Response;
 import utils.CardNumbers;
 
 import java.sql.SQLException;
 import java.util.Map;
 
-public class CardService {
+public class CardServiceImpl implements CardsService {
 
-    private static CardService instance;
+    private static CardServiceImpl instance;
     private CardsDAOImpl dc;
 
-    private CardService(){}
+    private CardServiceImpl(){}
 
-    public static CardService getInstance() {
+    public static CardServiceImpl getInstance() {
         if (instance == null) {
-            instance = new CardService();
+            instance = new CardServiceImpl();
         }
         return instance;
     }
@@ -31,12 +32,13 @@ public class CardService {
     }
 
 
-    public Response add(String accountNumber) {
-        CreateCardResponse response = new CreateCardResponse();
+    public Response createNewCardByAccountNumber(String accountNumber) {
+        Response response = new Response();
         try {
             Account account = dc.checkAccount(accountNumber);
             if (account == null) {
-                response.setStatusCode(400);
+                response.setStatus(400);
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -44,30 +46,34 @@ public class CardService {
             try {
                 Card newCard = new Card(generateNewCard(), account.getAccountNumber(), account.getUserID());
                 String cardNumber = dc.create(newCard);
-                response.setStatusCode(200);
+                response.setStatus(200);
+                response.setMessage("Card was added successfully");
                 response.setResponse(cardNumber);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                response.setStatusCode(500);
+                response.setStatus(500);
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-            response.setStatusCode(500);
+            response.setStatus(500);
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }
         return response;
     }
 
-    public Response getAll(String accountNumber) {
-        ReadCardsResponse response = new ReadCardsResponse();
+    public Response getAllCards(String accountNumber) {
+        Response response = new Response();
         try {
             Account account = dc.checkAccount(accountNumber);
             if (account == null) {
-                response.setStatusCode(400);
+                response.setStatus(400);
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -75,18 +81,21 @@ public class CardService {
             try {
                 Map<Integer, String> cardList;
                 cardList = dc.getAllByAccountNumber(accountNumber);
-                response.setStatusCode(200);
+                response.setStatus(200);
+                response.setMessage("Cards was received successfully");
                 response.setResponse(cardList);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                response.setStatusCode(500);
+                response.setStatus(500);
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-            response.setStatusCode(500);
+            response.setStatus(500);
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }

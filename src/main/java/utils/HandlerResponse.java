@@ -2,14 +2,13 @@ package utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import response.Response;
-
+import entities.Response;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HandlerResponse {
 
-    public static String responseToJSON(Response<?> response) {
+    public static String responseToJSON(Response response) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonResponse = null;
         try {

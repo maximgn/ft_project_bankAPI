@@ -7,16 +7,16 @@ import entities.Response;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
-public class AccountService {
+public class AccountServiceImpl implements AccountsService {
 
-    private static AccountService instance;
+    private static AccountServiceImpl instance;
     private AccountsDAOImpl da;
 
-    private AccountService(){}
+    private AccountServiceImpl(){}
 
-    public static AccountService getInstance() {
+    public static AccountServiceImpl getInstance() {
         if (instance == null) {
-            instance = new AccountService();
+            instance = new AccountServiceImpl();
         }
         return instance;
     }
@@ -35,25 +35,28 @@ public class AccountService {
             Account account = da.checkAccount(accountNumber);
             if (account == null) {
                 response.setStatus(400);
-                response.setMessage("");
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
 
             try {
                 Object responseSum = da.updateBalance(accountNumber, sum);
-                response.setStatusCode(200);
+                response.setStatus(200);
+                response.setMessage("The balance was successfully updated");
                 response.setResponse(responseSum);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                response.setStatusCode(500);
+                response.setStatus(500);
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-            response.setStatusCode(500);
+            response.setStatus(500);
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }
@@ -61,29 +64,33 @@ public class AccountService {
     }
 
     public Response readBalance(String accountNumber) {
-        ReadBalanceResponse response = new ReadBalanceResponse();
+        Response response = new Response();
         try {
             Account account = da.checkAccount(accountNumber);
             if (account == null) {
-                response.setStatusCode(400);
+                response.setStatus(400);
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
 
             try {
                 BigDecimal responseSum = da.readBalance(accountNumber);
-                response.setStatusCode(200);
+                response.setStatus(200);
+                response.setMessage("The balance was successfully received");
                 response.setResponse(responseSum);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                response.setStatusCode(500);
+                response.setStatus(500);
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
 
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-            response.setStatusCode(500);
+            response.setStatus(500);
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }
