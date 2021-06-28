@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountsService {
             Account account = da.checkAccount(accountNumber);
             if (account == null) {
                 response.setStatus(400);
-                response.setMessage("The account you provided does not exist.");
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -43,12 +43,12 @@ public class AccountServiceImpl implements AccountsService {
             try {
                 Object responseSum = da.updateBalance(accountNumber, sum);
                 response.setStatus(200);
-                response.setMessage("The balance was successfully updated.");
+                response.setMessage("The balance was successfully updated");
                 response.setResponse(responseSum);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 response.setStatus(500);
-                response.setMessage("Failed to connect to database.");
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
@@ -56,7 +56,7 @@ public class AccountServiceImpl implements AccountsService {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
             response.setStatus(500);
-            response.setMessage("Failed to connect to database.");
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }
@@ -69,7 +69,7 @@ public class AccountServiceImpl implements AccountsService {
             Account account = da.checkAccount(accountNumber);
             if (account == null) {
                 response.setStatus(400);
-                response.setMessage("The account you provided does not exist.");
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -77,12 +77,12 @@ public class AccountServiceImpl implements AccountsService {
             try {
                 BigDecimal responseSum = da.readBalance(accountNumber);
                 response.setStatus(200);
-                response.setMessage("The balance was successfully received.");
+                response.setMessage("The balance was successfully received");
                 response.setResponse(responseSum);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 response.setStatus(500);
-                response.setMessage("Failed to connect to database.");
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountsService {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
             response.setStatus(500);
-            response.setMessage("Failed to connect to database.");
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }

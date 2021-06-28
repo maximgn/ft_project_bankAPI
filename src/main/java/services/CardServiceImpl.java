@@ -38,7 +38,7 @@ public class CardServiceImpl implements CardsService {
             Account account = dc.checkAccount(accountNumber);
             if (account == null) {
                 response.setStatus(400);
-                response.setMessage("The account you provided does not exist.");
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -47,12 +47,12 @@ public class CardServiceImpl implements CardsService {
                 Card newCard = new Card(generateNewCard(), account.getAccountNumber(), account.getUserID());
                 String cardNumber = dc.create(newCard);
                 response.setStatus(200);
-                response.setMessage("Card was added successfully.");
+                response.setMessage("Card was added successfully");
                 response.setResponse(cardNumber);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 response.setStatus(500);
-                response.setMessage("Failed to connect to database.");
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
@@ -60,7 +60,7 @@ public class CardServiceImpl implements CardsService {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
             response.setStatus(500);
-            response.setMessage("Failed to connect to database.");
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }
@@ -73,7 +73,7 @@ public class CardServiceImpl implements CardsService {
             Account account = dc.checkAccount(accountNumber);
             if (account == null) {
                 response.setStatus(400);
-                response.setMessage("The account you provided does not exist.");
+                response.setMessage("The account you provided does not exist");
                 response.setResponse(null);
                 return response;
             }
@@ -82,12 +82,12 @@ public class CardServiceImpl implements CardsService {
                 Map<Integer, String> cardList;
                 cardList = dc.getAllByAccountNumber(accountNumber);
                 response.setStatus(200);
-                response.setMessage("Cards was received successfully.");
+                response.setMessage("Cards was received successfully");
                 response.setResponse(cardList);
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 response.setStatus(500);
-                response.setMessage("Failed to connect to database.");
+                response.setMessage("Failed to connect to database");
                 response.setResponse(null);
                 return response;
             }
@@ -95,7 +95,7 @@ public class CardServiceImpl implements CardsService {
         } catch (SQLException sqle) {
             sqle.printStackTrace();
             response.setStatus(500);
-            response.setMessage("Failed to connect to database.");
+            response.setMessage("Failed to connect to database");
             response.setResponse(null);
             return response;
         }

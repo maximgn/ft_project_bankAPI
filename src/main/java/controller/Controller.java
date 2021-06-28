@@ -7,7 +7,6 @@ import entities.Response;
 import services.AccountServiceImpl;
 import services.CardServiceImpl;
 import utils.HandlerResponse;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +31,7 @@ public class Controller {
 
     public void runServer() {
         try {
-            server = HttpServer.create(new InetSocketAddress("localhost", 9099), 0);
+            server = HttpServer.create(new InetSocketAddress("localhost", 9999), 0);
         } catch(IOException ioe){
             ioe.printStackTrace();
         }
@@ -47,6 +46,7 @@ public class Controller {
             String URI = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod();
             String bodyStr = "";
+            String[] paths = URI.split("/");
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))) {
                 bodyStr = br.lines().collect(Collectors.joining("\n"));
@@ -62,14 +62,14 @@ public class Controller {
             if (URI.equals("/cards") && method.equals("POST")) {
                 response = cardServiceImpl.createNewCardByAccountNumber((String)body.get("accountNumber"));
             }
-            if (URI.split("/")[1].equals("cards") && method.equals("GET")) {
-                response = cardServiceImpl.getAllCards(URI.split("/")[2]);
+            if (paths[1].equals("cards") && method.equals("GET")) {
+                response = cardServiceImpl.getAllCards(paths[2]);
             }
             if (URI.equals("/accounts") && method.equals("PUT")) {
                 response = accountServiceImpl.updateBalance((String)body.get("accountNumber"), (String)body.get("sum"));
             }
-            if (URI.split("/")[1].equals("accounts") && method.equals("GET")) {
-                response = accountServiceImpl.readBalance(URI.split("/")[2]);
+            if (paths[1].equals("accounts") && method.equals("GET")) {
+                response = accountServiceImpl.readBalance(paths[2]);
             }
             if (response == null) {
                 response = new Response();
